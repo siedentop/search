@@ -34,8 +34,6 @@ class Search {
         // Draw active nodes
         for(int i=0; i<active.length; i++) {
             active[i].draw();
-            println(active[i].pos);
-            println(active[i].end);
         }
     }
     void find(PVector goal_) {
@@ -44,7 +42,6 @@ class Search {
             return;
         } else {
             float[] angle = {0, -PI/6, PI/6};
-//             float[] angle = {PI/6};
             for (int i=0; i<angle.length; i++)
             {
                 append(active, current.getChild(30.0, angle[i]));
@@ -67,6 +64,7 @@ class Search {
             }
             else
             {
+                float R = distance / beta;
                 float cx = pos.x - sin(pos.z)*R;
                 float cy = pos.y + cos(pos.z)*R;
                 float x = cx + sin(pos.z+beta)*R;
