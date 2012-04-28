@@ -59,7 +59,7 @@ class Search {
     class Node implements Comparable<Node> {
         PVector pos, end;
         Node parent; ///< will be null if Node is start node.
-        float gcost;
+        float gcost, R, beta; // beta, amount of turning
         Node(PVector startPose, float distance, float wheelangle) {
             pos = startPose;
             if (parent == null) {
@@ -69,7 +69,7 @@ class Search {
             }
             gcost += distance; // add path length
             // Basic bicycle model
-            float beta = distance * tan(wheelangle) / LENGTH;
+            beta = distance * tan(wheelangle) / LENGTH;
             if(abs(beta) < 0.001)
             {
                 float x = pos.x + distance * cos(pos.z);
@@ -79,7 +79,7 @@ class Search {
             }
             else
             {
-                float R = distance / beta;
+                R = distance / beta;
                 float cx = pos.x - sin(pos.z)*R;
                 float cy = pos.y + cos(pos.z)*R;
                 float x = cx + sin(pos.z+beta)*R;
@@ -92,7 +92,21 @@ class Search {
             stroke(255);
             fill(100);
             ellipse(pos.x, pos.y, 10, 10);
-            line(pos.x, pos.y, end.x, end.y);
+            if (abs(beta) < 0.001)
+                line(pos.x, pos.y, end.x, end.y);
+            else {
+                noFill();
+                float cx = pos.x - sin(pos.z) * R;
+                float cy = pos.y + cos(pos.z) * R;
+                float start = (PI/2 - pos.z + PI) % (2*PI);
+                float stop = start + sign(beta)*beta;
+                if (R < 0.0) {
+                    float tmp = stop;
+                    stop = (2*PI - start) % (2*PI);
+                    start = (2*PI - tmp) % (2*PI);
+                }
+                arc(cx, cy, 2*abs(R), 2*abs(R), start, stop);
+            }
         }
         boolean goalReached() {
             result = (distance_sq(goal, end) < pow(MIN_DIST, 2));
@@ -144,4 +158,9 @@ ArrayList<Node> quicksort(ArrayList<Node> array) {
     result.add(pivot);
     result.addAll(quicksort(right));
     return result;
+}
+
+int sign(float x) {
+    if (x<0) return -1;
+    else return 1;
 }
