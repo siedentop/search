@@ -24,10 +24,11 @@ float distance_sq(PVector a, PVector b) {
 class Search {
     PVector goal;
     Node current;
-    ArrayList<Node> active;
+    ArrayList<Node> active, closed;
     Search(PVector startPose) {
         current = new Node(startPose, 0.0, 0.0);
         active = new ArrayList<Node>;
+        closed = new ArrayList<Node>;
     }
     void draw() {
         // draw current start node
@@ -45,15 +46,18 @@ class Search {
     }
     void find(PVector goal_) {
         goal = goal_;
-        if(current.goalReached()) {
-            return;
-        } else {
+        while(!current.goalReached())
+        {
             float[] angle = {0, -PI/6, PI/6};
             for (int i=0; i<angle.length; i++)
             {
                 active.add(current.getChild(30.0, angle[i]));
             }
             active = quicksort(active);
+            // remove current from active and add to closed. 
+            closed.add(current);
+            current = active.get(0); //TODO might need casting.
+            active.remove(0);
         }
     }
     class Node implements Comparable<Node> {
