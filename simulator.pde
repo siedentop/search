@@ -32,6 +32,8 @@ class Search {
     }
     void draw() {
         // draw current start node
+        fill(100);
+        stroke(255);
         current.draw();
         // Draw Goal in Yellow
         fill(255,255,0);
@@ -39,17 +41,20 @@ class Search {
         if(goal != null) {
             ellipse(goal.x, goal.y, 10, 10);
         }
-        // Draw active nodes
-        for(int i=0; i<active.size(); i++) {
-            active.get(i).draw();
-        }
-        // Draw active nodes
+        // Draw closed nodes
+        stroke(255);
         for(int i=0; i<closed.size(); i++) {
             closed.get(i).draw();
+        }
+        // Draw active nodes
+        stroke(100);
+        for(int i=0; i<active.size(); i++) {
+            active.get(i).draw();
         }
     }
     void find(PVector goal_) {
         goal = goal_;
+        int i =0;
         while(!current.goalReached())
         {
             float[] angle = {0, -PI/6, PI/6};
@@ -60,7 +65,7 @@ class Search {
             active = quicksort(active);
             // remove current from active and add to closed. 
             closed.add(current);
-            current = active.get(0); //TODO might need casting.
+            current = active.get(0);
             active.remove(0);
         }
     }
@@ -97,21 +102,20 @@ class Search {
             }
         }
         void draw() {
-            stroke(255);
             fill(100);
-            ellipse(pos.x, pos.y, 10, 10);
+            ellipse(pos.x, pos.y, 3, 3);
             if (abs(beta) < 0.001)
                 line(pos.x, pos.y, end.x, end.y);
             else {
                 noFill();
                 float cx = pos.x - sin(pos.z) * R;
                 float cy = pos.y + cos(pos.z) * R;
-                float start = (PI/2 - pos.z + PI) % (2*PI);
+                float start = pos.z - PI/2;
                 float stop = start + sign(beta)*beta;
-                if (R < 0.0) {
-                    float tmp = stop;
-                    stop = (2*PI - start) % (2*PI);
-                    start = (2*PI - tmp) % (2*PI);
+
+                if(R<0) {
+                    start += PI - sign(beta)*beta;
+                    stop += PI - sign(beta)*beta;
                 }
                 arc(cx, cy, 2*abs(R), 2*abs(R), start, stop);
             }
