@@ -43,6 +43,10 @@ class Search {
         for(int i=0; i<active.size(); i++) {
             active.get(i).draw();
         }
+        // Draw active nodes
+        for(int i=0; i<closed.size(); i++) {
+            closed.get(i).draw();
+        }
     }
     void find(PVector goal_) {
         goal = goal_;
