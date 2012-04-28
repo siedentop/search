@@ -17,8 +17,10 @@ void draw() {
 class Search {
     PVector goal;
     Node current;
+    Node[] active;
     Search(PVector startPose) {
         current = new Node(startPose, 0.0, 0.0);
+        active = {};
     }
     void draw() {
         // draw current start node
@@ -29,13 +31,24 @@ class Search {
         if(goal != null) {
             ellipse(goal.x, goal.y, 10, 10);
         }
+        // Draw active nodes
+        for(int i=0; i<active.length; i++) {
+            active[i].draw();
+            println(active[i].pos);
+            println(active[i].end);
+        }
     }
     void find(PVector goal_) {
         goal = goal_;
         if(current.goalReached()) {
             return;
         } else {
-            current.getChild(30.0, 0.2);
+            float[] angle = {0, -PI/6, PI/6};
+//             float[] angle = {PI/6};
+            for (int i=0; i<angle.length; i++)
+            {
+                append(active, current.getChild(30.0, angle[i]));
+            }
         }
     }
     class Node {
