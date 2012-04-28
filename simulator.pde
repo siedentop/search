@@ -59,8 +59,15 @@ class Search {
     class Node implements Comparable<Node> {
         PVector pos, end;
         Node parent; ///< will be null if Node is start node.
+        float gcost;
         Node(PVector startPose, float distance, float wheelangle) {
             pos = startPose;
+            if (parent == null) {
+                gcost = 0.0;
+            } else {
+                gcost += parent.gcost;
+            }
+            gcost += distance; // add path length
             // Basic bicycle model
             float beta = distance * tan(wheelangle) / LENGTH;
             if(abs(beta) < 0.001)
@@ -99,8 +106,8 @@ class Search {
             return result;
         }
         float fcost() {
-            float h = distance_sq(end, goal);
-            return h;
+            float h = sqrt(distance_sq(end, goal));
+            return h + gcost;
         }
     }
 }
