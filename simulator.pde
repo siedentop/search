@@ -20,7 +20,7 @@ void draw() {
     search.draw();
 }
 
-void mouseMoved(){
+void mouseDragged(){
     float x = mouseX;
     float y = mouseY;
     obstacle.move(x, y);
@@ -142,8 +142,6 @@ class Search {
         }
         boolean goalReached() {
             result = (distance_sq(goal, end) < pow(MIN_DIST, 2));
-            if (result)
-                println("Goal Reached!");
             return result;
         }
         Node getChild(float distance, float wheelangle) {
