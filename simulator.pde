@@ -15,7 +15,19 @@ void setup() {
     search.draw();
 }
 void draw() {
-//     search.draw();
+    background(0, 48, 124);
+    obstacle.draw();
+    search.draw();
+}
+
+void mouseMoved(){
+    float x = mouseX;
+    float y = mouseY;
+    obstacle.move(x, y);
+    search.research(new PVector(20, 20));
+    background(0, 48, 124);
+    obstacle.draw();
+    search.draw();
 }
 
 /// Return distance squared between two PVectors but only in 2D. z value is discarded
@@ -67,6 +79,12 @@ class Search {
             current = active.get(0);
             active.remove(0);
         }
+    }
+    void research(PVector startPose) {
+        current = new Node(startPose, 0.0, 0.0);
+        active = new ArrayList<Node>;
+        closed = new ArrayList<Node>;
+        find(goal);
     }
 
     class Node implements Comparable<Node> {
@@ -188,6 +206,10 @@ class Obstacle {
     }
     void draw() {
         color(0);
+        fill(0);
         ellipse(pos.x, pos.y, r, r);
+    }
+    void move(float x, float y) {
+        pos = new PVector(x, y);
     }
 }
