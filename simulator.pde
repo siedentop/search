@@ -1,19 +1,21 @@
 Search search;
+Obstacle obstacle;
 
 float LENGTH = 25.0;
 float MIN_DIST = 10.0; // Distance within goal is considered reached
 
 void setup() {
-    noLoop();
     size(200, 200);
     background(0, 48, 124);
-    PVector pose = new PVector(100, 100);
+    PVector pose = new PVector(20, 20);
+    obstacle = new Obstacle(100, 100);
+    obstacle.draw();
     search = new Search(pose);
-    search.find(new PVector(200,0));
+    search.find(new PVector(180,180));
+    search.draw();
 }
 void draw() {
-    search.draw();
-    println("Success!");
+//     search.draw();
 }
 
 /// Return distance squared between two PVectors but only in 2D. z value is discarded
@@ -54,12 +56,9 @@ class Search {
     }
     void find(PVector goal_) {
         goal = goal_;
-        int i =0;
-        while(!current.goalReached())
-        {
-            float[] angle = {0, -PI/6, PI/6};
-            for (int i=0; i<angle.length; i++)
-            {
+        while(!current.goalReached()) {
+            float[] angle = {0, -PI/6, PI/6, -PI/12, PI/12};
+            for (int i=0; i<angle.length; i++) {
                 active.add(current.getChild(30.0, angle[i]));
             }
             active = quicksort(active);
@@ -69,6 +68,7 @@ class Search {
             active.remove(0);
         }
     }
+
     class Node implements Comparable<Node> {
         PVector pos, end;
         Node parent; ///< will be null if Node is start node.
@@ -100,6 +100,8 @@ class Search {
                 float theta = (pos.z+beta) % (2*PI);
                 end = new PVector(x, y, theta);
             }
+            // add cost for coming to near an obstacle
+            gcost += 70 * pow(sqrt(distance_sq(end, obstacle.pos)) + 1 - obstacle.r, -2); // scaling factor
         }
         void draw() {
             fill(100);
@@ -175,4 +177,17 @@ ArrayList<Node> quicksort(ArrayList<Node> array) {
 int sign(float x) {
     if (x<0) return -1;
     else return 1;
+}
+
+class Obstacle {
+    float r;
+    PVector pos;
+    Obstacle(float x, float y) {
+        pos = new PVector(x, y);
+        r = 30;
+    }
+    void draw() {
+        color(0);
+        ellipse(pos.x, pos.y, r, r);
+    }
 }
